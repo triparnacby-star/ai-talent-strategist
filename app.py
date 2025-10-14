@@ -21,7 +21,7 @@ anthropic_client = Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# HR AI Assistant Prompts - COMPLETELY GENERIC
+# HR AI Assistant Prompts - GENERIC RESPONSES ONLY
 HR_SYSTEM_PROMPTS = {
     "interview_design": """You are an HR AI assistant specializing in inclusive, bias-free interview design. 
     Your capabilities include:
@@ -37,7 +37,7 @@ HR_SYSTEM_PROMPTS = {
     3. Legal compliance and best practices
     4. Practical implementation guidance
     
-    Provide specific, actionable advice with examples. Do not reference any specific companies, personal experiences, or proprietary methodologies.""",
+    Provide specific, actionable advice with examples. Do not reference any specific companies, personal experiences, or proprietary methodologies. Do not say "I" or claim personal experience. Provide objective, research-based guidance.""",
     
     "job_descriptions": """You are an HR AI assistant focused on creating equitable, compelling job descriptions that attract diverse talent.
     Your capabilities include:
@@ -54,7 +54,7 @@ HR_SYSTEM_PROMPTS = {
     4. Accessibility considerations
     5. Legal compliance
     
-    Provide specific language suggestions and improvements. Do not reference any specific companies or personal experiences.""",
+    Provide specific language suggestions and improvements. Do not reference any specific companies or personal experiences. Do not say "I" or claim personal experience. Provide objective, research-based guidance.""",
     
     "leadership_coaching": """You are an HR AI assistant specializing in people leadership guidance.
     Your capabilities include:
@@ -71,7 +71,7 @@ HR_SYSTEM_PROMPTS = {
     4. Follow-up recommendations
     5. Best practice guidance
     
-    Focus on practical, immediately actionable guidance. Do not reference any specific companies, personal experiences, or proprietary methodologies.""",
+    Focus on practical, immediately actionable guidance. Do not reference any specific companies or personal experiences. Do not say "I" or claim personal experience. Provide objective, research-based guidance.""",
     
     "workforce_planning": """You are an HR AI assistant focused on strategic workforce planning.
     Your capabilities include:
@@ -88,7 +88,7 @@ HR_SYSTEM_PROMPTS = {
     4. Remote/hybrid workforce considerations
     5. Cost-effective scaling approaches
     
-    Provide data-driven recommendations with clear rationale. Do not reference any specific companies or personal experiences.""",
+    Provide data-driven recommendations with clear rationale. Do not reference any specific companies or personal experiences. Do not say "I" or claim personal experience. Provide objective, research-based guidance.""",
     
     "hr_systems": """You are an HR AI assistant specializing in scalable HR systems and operations.
     Your capabilities include:
@@ -105,7 +105,7 @@ HR_SYSTEM_PROMPTS = {
     4. Data-driven insights and metrics
     5. Technology integration strategies
     
-    Provide systematic, implementable solutions. Do not reference any specific companies or personal experiences."""
+    Provide systematic, implementable solutions. Do not reference any specific companies or personal experiences. Do not say "I" or claim personal experience. Provide objective, research-based guidance."""
 }
 
 def get_hr_response(category, user_message, conversation_history=None):
@@ -215,100 +215,323 @@ def get_categories():
     }
     return jsonify(categories)
 
-@app.route('/demo', methods=['GET'])
+@app.route('/')
+@app.route('/demo')
 def demo():
-    """Simple demo interface - GENERIC VERSION"""
+    """Landing page with original design"""
     html_template = '''
     <!DOCTYPE html>
     <html>
     <head>
-        <title>AI HR Assistant Demo</title>
+        <title>Your AI Talent Strategist</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-            body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-            .container { background: #f5f5f5; padding: 20px; border-radius: 8px; }
-            .chat-box { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-            .user-msg { background: #e3f2fd; }
-            .ai-msg { background: #f3e5f5; }
-            input[type="text"] { width: 70%; padding: 10px; margin: 5px; }
-            button { padding: 10px 20px; margin: 5px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer; }
-            select { padding: 10px; margin: 5px; }
-            #response { min-height: 100px; }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: 100vh;
+            }
+            
+            .header {
+                background: linear-gradient(135deg, #FF9A56 0%, #FF7B3D 100%);
+                padding: 40px 20px;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            
+            .header h1 {
+                color: white;
+                font-size: 2.5em;
+                font-weight: 300;
+                letter-spacing: 2px;
+            }
+            
+            .profile-card {
+                background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+                max-width: 600px;
+                margin: -30px auto 40px;
+                padding: 40px;
+                border-radius: 20px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            }
+            
+            .profile-card h2 {
+                color: #FF9A56;
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+            
+            .profile-card p {
+                color: #ECF0F1;
+                font-size: 1.1em;
+                line-height: 1.6;
+                margin-bottom: 30px;
+            }
+            
+            .profile-links {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+            
+            .profile-link {
+                background: #FF9A56;
+                color: white;
+                padding: 12px 30px;
+                border-radius: 25px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+            
+            .profile-link:hover {
+                background: #FF7B3D;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 154, 86, 0.4);
+            }
+            
+            .main-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 40px 20px;
+            }
+            
+            .section {
+                background: white;
+                padding: 40px;
+                border-radius: 15px;
+                margin-bottom: 30px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            }
+            
+            .section h3 {
+                color: #2C3E50;
+                font-size: 1.8em;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            
+            .focus-area {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .focus-icon {
+                font-size: 2em;
+            }
+            
+            .focus-text {
+                color: #3498DB;
+                font-size: 1.3em;
+                font-weight: 600;
+            }
+            
+            .challenge-section {
+                text-align: center;
+            }
+            
+            .challenge-input {
+                width: 100%;
+                max-width: 600px;
+                padding: 20px;
+                font-size: 1em;
+                border: 2px solid #e0e0e0;
+                border-radius: 10px;
+                margin: 20px auto;
+                display: block;
+                resize: vertical;
+                min-height: 120px;
+            }
+            
+            .challenge-input:focus {
+                outline: none;
+                border-color: #FF9A56;
+            }
+            
+            .cta-button {
+                background: linear-gradient(135deg, #FF9A56 0%, #FF7B3D 100%);
+                color: white;
+                padding: 18px 50px;
+                font-size: 1.2em;
+                border: none;
+                border-radius: 30px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                box-shadow: 0 5px 15px rgba(255, 154, 86, 0.3);
+            }
+            
+            .cta-button:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(255, 154, 86, 0.4);
+            }
+            
+            .category-selector {
+                margin: 20px 0;
+                text-align: center;
+            }
+            
+            .category-selector select {
+                padding: 12px 20px;
+                font-size: 1em;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                background: white;
+                cursor: pointer;
+            }
+            
+            .response-box {
+                background: #f8f9fa;
+                padding: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                min-height: 150px;
+                border-left: 5px solid #FF9A56;
+            }
+            
+            .response-box.loading {
+                text-align: center;
+                color: #7f8c8d;
+                font-style: italic;
+            }
+            
+            .response-box.active {
+                background: white;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            }
+            
+            @media (max-width: 768px) {
+                .header h1 {
+                    font-size: 1.8em;
+                }
+                
+                .profile-card {
+                    margin: -20px 20px 30px;
+                    padding: 30px 20px;
+                }
+                
+                .profile-card h2 {
+                    font-size: 1.5em;
+                }
+                
+                .section {
+                    padding: 25px 20px;
+                }
+            }
         </style>
     </head>
     <body>
-        <h1>🤖 AI HR Assistant - Demo</h1>
+        <div class="header">
+            <h1>Your AI Talent Strategist</h1>
+        </div>
         
-        <div class="container">
-            <h2>Test the AI HR Assistant</h2>
-            
-            <div>
-                <select id="category">
-                    <option value="interview_design">Inclusive Interview Design</option>
-                    <option value="job_descriptions">Equitable Job Descriptions</option>
-                    <option value="leadership_coaching">Leadership Coaching</option>
-                    <option value="workforce_planning">Strategic Workforce Planning</option>
-                    <option value="hr_systems">Scalable HR Systems</option>
-                </select>
-            </div>
-            
-            <div>
-                <input type="text" id="messageInput" placeholder="Ask your HR question..." />
-                <button onclick="sendMessage()">Send</button>
-            </div>
-            
-            <div id="response" class="chat-box ai-msg">
-                <em>Your AI response will appear here...</em>
+        <div class="profile-card">
+            <h2>Triparna Chakraborty</h2>
+            <p>Engineer-turned-HRBP | 12+ Years Global Experience | People Partner</p>
+            <div class="profile-links">
+                <a href="https://www.linkedin.com/in/triparna-chakraborty/" target="_blank" class="profile-link">LinkedIn</a>
+                <a href="mailto:triparna.chakraborty@example.com" class="profile-link">Contact</a>
             </div>
         </div>
         
-        <div class="container">
-            <h3>Quick Test Examples:</h3>
-            <button onclick="testMessage('How do I design bias-free interview questions for a Senior Engineer role?')">Interview Questions</button>
-            <button onclick="testMessage('Review this job description for inclusive language: Senior Product Manager, 5+ years required')">Job Description Review</button>  
-            <button onclick="testMessage('How do I give feedback to a high performer who is creating team tension?')">Difficult Conversation</button>
+        <div class="main-container">
+            <div class="section">
+                <h3>Strategic Focus Area:</h3>
+                <div class="focus-area">
+                    <span class="focus-icon">🎯</span>
+                    <span class="focus-text">Hiring & Workforce Planning</span>
+                </div>
+            </div>
+            
+            <div class="section challenge-section">
+                <h3>Your Strategic People Challenge:</h3>
+                <p style="color: #7f8c8d; margin-bottom: 20px;">
+                    Describe your organizational challenge or strategic question. I'll provide data-driven insights.
+                </p>
+                
+                <div class="category-selector">
+                    <label for="category" style="font-weight: 600; margin-right: 10px;">Select Category:</label>
+                    <select id="category">
+                        <option value="workforce_planning">Workforce Planning</option>
+                        <option value="interview_design">Interview Design</option>
+                        <option value="job_descriptions">Job Descriptions</option>
+                        <option value="leadership_coaching">Leadership Coaching</option>
+                        <option value="hr_systems">HR Systems</option>
+                    </select>
+                </div>
+                
+                <textarea 
+                    id="challengeInput" 
+                    class="challenge-input" 
+                    placeholder="Example: We're scaling from 50 to 200 employees in 12 months. How should we structure our hiring roadmap?"
+                ></textarea>
+                
+                <button class="cta-button" onclick="getStrategicGuidance()">
+                    Get Strategic Guidance
+                </button>
+                
+                <div id="responseBox" class="response-box">
+                    <em style="color: #95a5a6;">Your AI-powered guidance will appear here...</em>
+                </div>
+            </div>
         </div>
-
+        
         <script>
-        function sendMessage() {
-            const message = document.getElementById('messageInput').value;
+        async function getStrategicGuidance() {
+            const input = document.getElementById('challengeInput').value;
             const category = document.getElementById('category').value;
+            const responseBox = document.getElementById('responseBox');
             
-            if (!message) return;
+            if (!input.trim()) {
+                alert('Please describe your challenge or question.');
+                return;
+            }
             
-            document.getElementById('response').innerHTML = '<em>Thinking...</em>';
+            responseBox.className = 'response-box loading';
+            responseBox.innerHTML = '<em>Analyzing your challenge and generating insights...</em>';
             
-            fetch('/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: message,
-                    category: category,
-                    session_id: 'demo-session'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('response').innerHTML = 
-                    '<strong>Category:</strong> ' + data.category + '<br/><br/>' +
-                    '<strong>Response:</strong><br/>' + data.response.replace(/\\n/g, '<br/>');
-            })
-            .catch(error => {
-                document.getElementById('response').innerHTML = '<em>Error: ' + error + '</em>';
-            });
-            
-            document.getElementById('messageInput').value = '';
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: input,
+                        category: category,
+                        session_id: 'web-session-' + Date.now()
+                    })
+                });
+                
+                const data = await response.json();
+                
+                responseBox.className = 'response-box active';
+                responseBox.innerHTML = '<strong>Strategic Guidance:</strong><br><br>' + 
+                    data.response.replace(/\n/g, '<br>');
+                    
+            } catch (error) {
+                responseBox.className = 'response-box';
+                responseBox.innerHTML = '<em style="color: #e74c3c;">Error: Unable to generate guidance. Please try again.</em>';
+            }
         }
         
-        function testMessage(msg) {
-            document.getElementById('messageInput').value = msg;
-            sendMessage();
-        }
-        
-        document.getElementById('messageInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
+        document.getElementById('challengeInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                getStrategicGuidance();
             }
         });
         </script>
@@ -321,9 +544,7 @@ if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
     debug = os.getenv('FLASK_ENV') == 'development'
     
-    print(f"🚀 Starting AI HR Assistant on port {port}")
-    print(f"📊 Demo interface: http://localhost:{port}/demo")
-    print(f"🏥 Health check: http://localhost:{port}/health")
-    print(f"💬 API endpoint: http://localhost:{port}/chat")
+    print(f"🚀 Starting Your AI Talent Strategist on port {port}")
+    print(f"🌐 Access at: http://localhost:{port}")
     
     app.run(host='0.0.0.0', port=port, debug=debug)
