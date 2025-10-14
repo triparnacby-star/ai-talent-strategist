@@ -117,7 +117,7 @@ def get_hr_response(category, user_message, conversation_history=None):
     messages = []
     
     if conversation_history:
-        for msg in conversation_history[-6:]:  # Last 6 messages for context
+        for msg in conversation_history[-6:]:
             messages.append({
                 "role": msg["role"],
                 "content": msg["content"]
@@ -142,7 +142,7 @@ def get_hr_response(category, user_message, conversation_history=None):
         logger.error(f"Error getting Claude response: {str(e)}")
         return f"I apologize, but I'm having trouble processing your request right now. Please try again in a moment."
 
-# In-memory session storage (in production, use Redis or database)
+# In-memory session storage
 sessions = {}
 
 @app.route('/health', methods=['GET'])
@@ -167,18 +167,15 @@ def chat():
         category = data.get('category', 'leadership_coaching')
         session_id = data.get('session_id', 'default')
         
-        # Get or create session
         if session_id not in sessions:
             sessions[session_id] = []
         
-        # Get AI response
         response_text = get_hr_response(
             category=category,
             user_message=user_message,
             conversation_history=sessions[session_id]
         )
         
-        # Store conversation
         sessions[session_id].append({
             "role": "user",
             "content": user_message,
@@ -210,7 +207,7 @@ def get_categories():
         "interview_design": "Inclusive Interview Design",
         "job_descriptions": "Equitable Job Descriptions", 
         "leadership_coaching": "Leadership Coaching",
-        "workforce_planning": "Strategic Workforce Planning",
+        "workforce_planning": "Hiring & Workforce Planning",
         "hr_systems": "Scalable HR Systems"
     }
     return jsonify(categories)
@@ -218,7 +215,7 @@ def get_categories():
 @app.route('/')
 @app.route('/demo')
 def demo():
-    """Landing page with original design"""
+    """Landing page with app-focused layout"""
     html_template = '''
     <!DOCTYPE html>
     <html>
@@ -240,7 +237,7 @@ def demo():
             
             .header {
                 background: linear-gradient(135deg, #FF9A56 0%, #FF7B3D 100%);
-                padding: 40px 20px;
+                padding: 30px 20px;
                 text-align: center;
                 box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             }
@@ -252,108 +249,73 @@ def demo():
                 letter-spacing: 2px;
             }
             
-            .profile-card {
-                background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
-                max-width: 600px;
-                margin: -30px auto 40px;
-                padding: 40px;
-                border-radius: 20px;
-                text-align: center;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            .main-layout {
+                max-width: 1400px;
+                margin: 40px auto;
+                padding: 0 20px;
+                display: grid;
+                grid-template-columns: 1fr 350px;
+                gap: 30px;
+                align-items: start;
             }
             
-            .profile-card h2 {
-                color: #FF9A56;
-                font-size: 2em;
-                margin-bottom: 20px;
-            }
-            
-            .profile-card p {
-                color: #ECF0F1;
-                font-size: 1.1em;
-                line-height: 1.6;
-                margin-bottom: 30px;
-            }
-            
-            .profile-links {
-                display: flex;
-                justify-content: center;
-                gap: 20px;
-                flex-wrap: wrap;
-            }
-            
-            .profile-link {
-                background: #FF9A56;
-                color: white;
-                padding: 12px 30px;
-                border-radius: 25px;
-                text-decoration: none;
-                font-weight: 600;
-                transition: all 0.3s ease;
-            }
-            
-            .profile-link:hover {
-                background: #FF7B3D;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(255, 154, 86, 0.4);
-            }
-            
-            .main-container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 40px 20px;
-            }
-            
-            .section {
+            .app-section {
                 background: white;
                 padding: 40px;
                 border-radius: 15px;
-                margin-bottom: 30px;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             }
             
-            .section h3 {
+            .app-section h2 {
                 color: #2C3E50;
                 font-size: 1.8em;
-                margin-bottom: 20px;
-                text-align: center;
+                margin-bottom: 10px;
             }
             
-            .focus-area {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                padding: 20px;
-                background: #f8f9fa;
-                border-radius: 10px;
-                margin-bottom: 20px;
+            .app-section .subtitle {
+                color: #7f8c8d;
+                margin-bottom: 30px;
+                line-height: 1.6;
             }
             
-            .focus-icon {
-                font-size: 2em;
+            .form-group {
+                margin-bottom: 25px;
             }
             
-            .focus-text {
-                color: #3498DB;
-                font-size: 1.3em;
+            .form-group label {
+                display: block;
+                color: #2C3E50;
                 font-weight: 600;
+                margin-bottom: 10px;
+                font-size: 1.1em;
             }
             
-            .challenge-section {
-                text-align: center;
+            .form-group select {
+                width: 100%;
+                padding: 15px;
+                font-size: 1em;
+                border: 2px solid #e0e0e0;
+                border-radius: 10px;
+                background: white;
+                cursor: pointer;
+                transition: border-color 0.3s;
+            }
+            
+            .form-group select:focus {
+                outline: none;
+                border-color: #FF9A56;
             }
             
             .challenge-input {
                 width: 100%;
-                max-width: 600px;
                 padding: 20px;
                 font-size: 1em;
                 border: 2px solid #e0e0e0;
                 border-radius: 10px;
-                margin: 20px auto;
-                display: block;
                 resize: vertical;
-                min-height: 120px;
+                min-height: 150px;
+                font-family: inherit;
+                transition: border-color 0.3s;
             }
             
             .challenge-input:focus {
@@ -372,25 +334,13 @@ def demo():
                 font-weight: 600;
                 transition: all 0.3s ease;
                 box-shadow: 0 5px 15px rgba(255, 154, 86, 0.3);
+                width: 100%;
+                margin-top: 20px;
             }
             
             .cta-button:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 8px 20px rgba(255, 154, 86, 0.4);
-            }
-            
-            .category-selector {
-                margin: 20px 0;
-                text-align: center;
-            }
-            
-            .category-selector select {
-                padding: 12px 20px;
-                font-size: 1em;
-                border: 2px solid #e0e0e0;
-                border-radius: 8px;
-                background: white;
-                cursor: pointer;
             }
             
             .response-box {
@@ -411,6 +361,65 @@ def demo():
             .response-box.active {
                 background: white;
                 box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                line-height: 1.8;
+            }
+            
+            .profile-sidebar {
+                background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+                padding: 40px 30px;
+                border-radius: 15px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                position: sticky;
+                top: 20px;
+            }
+            
+            .profile-sidebar h3 {
+                color: #FF9A56;
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+            
+            .profile-sidebar p {
+                color: #ECF0F1;
+                font-size: 1em;
+                line-height: 1.6;
+                margin-bottom: 30px;
+            }
+            
+            .profile-links {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .profile-link {
+                background: #FF9A56;
+                color: white;
+                padding: 12px 30px;
+                border-radius: 25px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                display: block;
+            }
+            
+            .profile-link:hover {
+                background: #FF7B3D;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 154, 86, 0.4);
+            }
+            
+            @media (max-width: 1024px) {
+                .main-layout {
+                    grid-template-columns: 1fr;
+                }
+                
+                .profile-sidebar {
+                    position: relative;
+                    top: 0;
+                    order: -1;
+                }
             }
             
             @media (max-width: 768px) {
@@ -418,17 +427,12 @@ def demo():
                     font-size: 1.8em;
                 }
                 
-                .profile-card {
-                    margin: -20px 20px 30px;
-                    padding: 30px 20px;
-                }
-                
-                .profile-card h2 {
-                    font-size: 1.5em;
-                }
-                
-                .section {
+                .app-section {
                     padding: 25px 20px;
+                }
+                
+                .profile-sidebar {
+                    padding: 30px 20px;
                 }
             }
         </style>
@@ -438,46 +442,32 @@ def demo():
             <h1>Your AI Talent Strategist</h1>
         </div>
         
-        <div class="profile-card">
-            <h2>Triparna Chakraborty</h2>
-            <p>Engineer-turned-HRBP | 12+ Years Global Experience | People Partner</p>
-            <div class="profile-links">
-                <a href="https://www.linkedin.com/in/triparna-chakraborty/" target="_blank" class="profile-link">LinkedIn</a>
-                <a href="mailto:triparna.chakraborty@example.com" class="profile-link">Contact</a>
-            </div>
-        </div>
-        
-        <div class="main-container">
-            <div class="section">
-                <h3>Strategic Focus Area:</h3>
-                <div class="focus-area">
-                    <span class="focus-icon">🎯</span>
-                    <span class="focus-text">Hiring & Workforce Planning</span>
-                </div>
-            </div>
-            
-            <div class="section challenge-section">
-                <h3>Your Strategic People Challenge:</h3>
-                <p style="color: #7f8c8d; margin-bottom: 20px;">
+        <div class="main-layout">
+            <div class="app-section">
+                <h2>Your Strategic People Challenge</h2>
+                <p class="subtitle">
                     Describe your organizational challenge or strategic question. I'll provide data-driven insights.
                 </p>
                 
-                <div class="category-selector">
-                    <label for="category" style="font-weight: 600; margin-right: 10px;">Select Category:</label>
+                <div class="form-group">
+                    <label for="category">🎯 Strategic Focus Area:</label>
                     <select id="category">
-                        <option value="workforce_planning">Workforce Planning</option>
-                        <option value="interview_design">Interview Design</option>
-                        <option value="job_descriptions">Job Descriptions</option>
+                        <option value="workforce_planning">Hiring & Workforce Planning</option>
+                        <option value="interview_design">Inclusive Interview Design</option>
+                        <option value="job_descriptions">Equitable Job Descriptions</option>
                         <option value="leadership_coaching">Leadership Coaching</option>
-                        <option value="hr_systems">HR Systems</option>
+                        <option value="hr_systems">Scalable HR Systems</option>
                     </select>
                 </div>
                 
-                <textarea 
-                    id="challengeInput" 
-                    class="challenge-input" 
-                    placeholder="Example: We're scaling from 50 to 200 employees in 12 months. How should we structure our hiring roadmap?"
-                ></textarea>
+                <div class="form-group">
+                    <label for="challengeInput">Your Challenge:</label>
+                    <textarea 
+                        id="challengeInput" 
+                        class="challenge-input" 
+                        placeholder="Example: We're scaling from 50 to 200 employees in 12 months. How should we structure our hiring roadmap?"
+                    ></textarea>
+                </div>
                 
                 <button class="cta-button" onclick="getStrategicGuidance()">
                     Get Strategic Guidance
@@ -485,6 +475,15 @@ def demo():
                 
                 <div id="responseBox" class="response-box">
                     <em style="color: #95a5a6;">Your AI-powered guidance will appear here...</em>
+                </div>
+            </div>
+            
+            <div class="profile-sidebar">
+                <h3>Triparna Chakraborty</h3>
+                <p>Engineer-turned-HRBP | 12+ Years Global Experience | People Partner</p>
+                <div class="profile-links">
+                    <a href="https://www.linkedin.com/in/triparna-chakraborty/" target="_blank" class="profile-link">LinkedIn</a>
+                    <a href="mailto:triparna.chakraborty@example.com" class="profile-link">Contact</a>
                 </div>
             </div>
         </div>
@@ -529,8 +528,7 @@ def demo():
         }
         
         document.getElementById('challengeInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
+            if (e.key === 'Enter' && e.ctrlKey) {
                 getStrategicGuidance();
             }
         });
