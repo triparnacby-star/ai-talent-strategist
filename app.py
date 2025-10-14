@@ -480,10 +480,10 @@ def demo():
             
             <div class="profile-sidebar">
                 <h3>Triparna Chakraborty</h3>
-                <p>Engineer-turned-HRBP | 12+ Years Global Experience | People Partner</p>
+                <p>Engineer-turned-HRBP | 12+ Years Global Experience</p>
                 <div class="profile-links">
-                    <a href="https://www.linkedin.com/in/triparna-chakraborty/" target="_blank" class="profile-link">LinkedIn</a>
-                    <a href="mailto:triparna.chakraborty@example.com" class="profile-link">Contact</a>
+                    <a href="https://www.linkedin.com/in/triparnachakraborty/" target="_blank" class="profile-link">LinkedIn</a>
+                    <a href="mailto:triparna.cby@gmail.com" class="profile-link">Contact</a>
                 </div>
             </div>
         </div>
