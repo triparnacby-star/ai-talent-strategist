@@ -488,7 +488,7 @@ def demo():
             </div>
         </div>
         
-        <script>
+        <script type="text/javascript">
         async function getStrategicGuidance() {
             const input = document.getElementById('challengeInput').value;
             const category = document.getElementById('category').value;
@@ -519,7 +519,7 @@ def demo():
                 
                 responseBox.className = 'response-box active';
                 responseBox.innerHTML = '<strong>Strategic Guidance:</strong><br><br>' + 
-                    data.response.replace(/\n/g, '<br>');
+                    data.response.replace(/\\n/g, '<br>');
                     
             } catch (error) {
                 responseBox.className = 'response-box';
