@@ -130,7 +130,7 @@ def get_hr_response(category, user_message, conversation_history=None):
     
     try:
         response = anthropic_client.messages.create(
-            model="claude-3-5-sonnet-20240620",
+            model="claude-sonnet-4-5-20250929",
             max_tokens=2000,
             system=system_prompt,
             messages=messages
